@@ -23,4 +23,6 @@ urlpatterns = [
     path('register', register),
     path('login', login_page),
     path('logout', logout_page),
+    path('promote', make_admin),
+    path('suicide', make_user),
 ]

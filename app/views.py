@@ -1,7 +1,7 @@
 from django.contrib.auth import login, authenticate, logout
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django import forms
 
 class RegisterValidation(forms.Form):
@@ -18,7 +18,31 @@ class LoginValidation(forms.Form):
 def secret(request):
     if not request.user.is_authenticated:
         return redirect('/login')
-    return render(request, 'index.html')
+    user = request.user
+    group = Group.objects.filter(name='admin').first()
+    if user.groups.filter(name=group).exists():
+        return render(request, 'admin.html')
+    else:
+        return render(request, 'index.html')
+
+def make_admin(request):
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+    group = Group.objects.filter(name='admin').first()
+    request.user.groups.add(group)
+
+    return redirect('/')
+
+def make_user(request):
+    if not request.user.is_authenticated:
+        return redirect('/login')
+
+    group = Group.objects.filter(name='admin').first()
+    request.user.groups.remove(group)
+
+    return redirect('/')
+
 
 def logout_page(request):
     logout(request)
