@@ -19,8 +19,7 @@ def secret(request):
     if not request.user.is_authenticated:
         return redirect('/login')
     user = request.user
-    group = Group.objects.filter(name='admin').first()
-    if user.groups.filter(name=group).exists():
+    if user.groups.filter(name='admin').exists():
         return render(request, 'admin.html')
     else:
         return render(request, 'index.html')
